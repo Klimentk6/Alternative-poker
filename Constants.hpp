@@ -22,9 +22,9 @@ enum SuitIndexes
     SPADES
 };
 
-const char rankArray[] = { '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
-const char suitArray[] = { 'C', 'D', 'H', 'S' };
-const unsigned rankPointsArray[] = { 7, 8, 9, 10, 10, 10, 10, 11 };
+const char RANK_SYMBOLS[] = { '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
+const char SUIT_SYMBOLS[] = { 'C', 'D', 'H', 'S' };
+const unsigned RANK_POINTS[] = { 7, 8, 9, 10, 10, 10, 10, 11 };
 
 const unsigned RANKS_COUNT = 8;
 const unsigned SUITS_COUNT = 4;
