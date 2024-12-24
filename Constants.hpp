@@ -5,21 +5,21 @@ const unsigned MAX_PLAYERS_COUNT = 9;
 
 enum RankIndexes
 {
-    SEVEN = 0,
-    EIGHT = 1,
-    NINE = 2,
-    TEN = 3,
-    JACK = 4,
-    QUEEN = 5,
-    KING = 6,
-    ACE = 7
+    SEVEN,
+    EIGHT,
+    NINE,
+    TEN,
+    JACK,
+    QUEEN,
+    KING,
+    ACE
 };
 enum SuitIndexes
 {
-    CLUBS = 0,
-    DIAMONDS = 1,
-    HEARTS = 2,
-    SPADES = 3
+    CLUBS,
+    DIAMONDS,
+    HEARTS,
+    SPADES
 };
 
 const char rankArray[] = { '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
