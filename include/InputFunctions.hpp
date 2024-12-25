@@ -1,63 +1,67 @@
 #pragma once
 
-bool isValidNumberOfPlayers(unsigned numberOfPlayers)
+using namespace std;
+
+bool isValidPlayersCount(unsigned playersCount)
 {
-    return numberOfPlayers >= MIN_PLAYERS_COUNT && numberOfPlayers <= MAX_PLAYERS_COUNT;
+    return playersCount >= MIN_PLAYERS_COUNT && playersCount <= MAX_PLAYERS_COUNT;
 }
-unsigned chooseNumberOfPlayers()
+unsigned choosePlayersCount()
 {
     cout << "How many players are going to play? (" << MIN_PLAYERS_COUNT << "-" << MAX_PLAYERS_COUNT << ")" << endl;
 
-    unsigned numberOfPlayers;
-    bool isValidInput = true;
-    do
+    unsigned playersCount;
+    while (true)
     {
-        isValidInput = true;
-        cin >> numberOfPlayers;
+        cin >> playersCount;
         if (cin.fail())
         {
-            isValidInput = false;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input!" << endl;
             cout << "Please enter a number between " << MIN_PLAYERS_COUNT << " and " << MAX_PLAYERS_COUNT << "." << endl;
         }
-        else if (!isValidNumberOfPlayers(numberOfPlayers))
+        else if (!isValidPlayersCount(playersCount))
         {
-            isValidInput = false;
             cout << "Invalid input!" << endl;
             cout << "Please enter a number between " << MIN_PLAYERS_COUNT << " and " << MAX_PLAYERS_COUNT << "." << endl;
         }
-    } while (!isValidInput);
+        else
+        {   
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
+    }
 
     cout << endl;
 
-    return numberOfPlayers;
+    return playersCount;
 }
 
 bool areGoingToPlayAgain()
 {
-    cout << endl;
     cout << "Do you want to play again? (y/n)" << endl;
 
-    char yesOrNo;
+    char playAgain;
     while (true)
     {
-        cin >> yesOrNo;
+        cin >> playAgain;
 
-        if (yesOrNo == 'y')
+        if (playAgain == 'y')
         {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return true;
         }
-        else if (yesOrNo == 'n')
+        else if (playAgain == 'n')
         {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return false;
         }
         else
         {
-            cout << "Invalid input! Please enter 'y' for yes or 'n' for no. " << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input! Please enter 'y' for yes or 'n' for no. " << endl;
         }
     }
 }
