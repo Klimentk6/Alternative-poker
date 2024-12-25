@@ -3,6 +3,12 @@
 const unsigned MIN_PLAYERS_COUNT = 2;
 const unsigned MAX_PLAYERS_COUNT = 9;
 
+struct Card
+{
+    unsigned rank;
+    unsigned suit;
+};
+
 enum RankIndexes
 {
     SEVEN,
@@ -35,9 +41,3 @@ const unsigned START_CHIPS_COUNT = 100;
 const unsigned ENTRY_CHIPS_COUNT = 1;
 
 const unsigned CARDS_PER_PLAYER = 3;
-
-struct Card
-{
-    unsigned rank;
-    unsigned suit;
-};
