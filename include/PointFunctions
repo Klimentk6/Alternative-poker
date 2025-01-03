@@ -1,1 +1,74 @@
+#pragma once
 
+using namespace std;
+
+void calculatePlayersPoints(unsigned* playersPoints, const Card* cardsInDeck, unsigned playersCount)
+{
+    for (unsigned index = 0; index < playersCount * CARDS_PER_PLAYER; index += CARDS_PER_PLAYER)
+    {
+        unsigned points = 0;
+        unsigned player = index / CARDS_PER_PLAYER;
+
+        Card first = cardsInDeck[index];
+        Card second = cardsInDeck[index + 1];
+        Card third = cardsInDeck[index + 2];
+
+        if (first.rank == second.rank && second.rank == third.rank)
+        {
+            if (first.rank == SEVEN)
+            {
+                points = 34;
+            }
+            else
+            {
+                points = RANK_POINTS[first.rank] * CARDS_PER_PLAYER;
+            }
+        }
+        else if (first.suit == second.suit && second.suit == third.suit)
+        {
+            if (isSevenOfClubs(first) || isSevenOfClubs(second) || isSevenOfClubs(third))
+            {
+                points += RANK_POINTS[ACE] - RANK_POINTS[SEVEN];
+            }
+            points = RANK_POINTS[first.rank] + RANK_POINTS[second.rank] + RANK_POINTS[third.rank];
+        }
+        else if (first.suit == second.suit)
+        {
+            points = RANK_POINTS[first.rank] + RANK_POINTS[second.rank];
+        }
+        else if (first.suit == third.suit)
+        {
+            points = RANK_POINTS[first.rank] + RANK_POINTS[third.rank];
+        }
+        else if (second.suit == third.suit)
+        {
+            points = RANK_POINTS[second.rank] + RANK_POINTS[third.rank];
+        }
+        else
+        {
+            if (first.rank > second.rank && first.rank > third.rank)
+            {
+                points = RANK_POINTS[first.rank];
+            }
+            else if (second.rank > first.rank && second.rank > third.rank)
+            {
+                points = RANK_POINTS[second.rank];
+            }
+            else
+            {
+                points = RANK_POINTS[first.rank];
+            }
+        }
+
+        playersPoints[player] = points;
+    }
+}
+
+void printPoints(const unsigned* playersPoints, unsigned playersCount)
+{
+    for (int i = 0; i < playersCount; i++)
+    {
+        cout << playersPoints[i] << ' ';
+    }
+    cout << endl;
+}
