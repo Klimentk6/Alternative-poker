@@ -1,1 +1,63 @@
+#pragma once
+
+using namespace std;
+
+
+void initializeChipStacks(int* chipsArray, unsigned playersCount)
+{
+    for (unsigned player = 0; player < playersCount; player++)
+    {
+        chipsArray[player] = START_CHIPS_COUNT * CHIP_VALUE;
+    }
+}
+
+void printGameStart()
+{
+    cout << "Game starts" << endl;
+    cout << endl;
+}
+void printRoundStart(unsigned roundCount)
+{
+    cout << "Round " << roundCount << endl;
+    cout << endl;
+}
+
+void printPlayersCardsAndPoints(const Card* cardsInDeck, const unsigned* playersPoints, unsigned player)
+{
+    for (int index = player * CARDS_PER_PLAYER; index < player * CARDS_PER_PLAYER + CARDS_PER_PLAYER; index++)
+    {
+        printCard(cardsInDeck[index]);
+    }
+    cout << "- " << playersPoints[player] << " points" << endl;
+}
+
+void printPlayersAndChipStacks(int* chipsArray, unsigned playersCount)
+{
+    for (unsigned player = 0; player < playersCount; player++)
+    {
+        if (player % 3 == 0 && player != 0)
+        {
+            cout << endl;
+        }
+        cout << "Player" << player + 1 << ": " << chipsArray[player] << ' ';
+    }
+    cout << endl;
+}
+void printPot(unsigned pot)
+{
+    cout << "Pot: " << pot << endl;
+}
+
+void payEntryFee(int* chipStacks, unsigned playersCount, unsigned& pot)
+{
+    unsigned entryValue = ENTRY_CHIPS_COUNT * CHIP_VALUE;
+
+    cout << "Entry fee: " << entryValue << endl;
+    for (unsigned i = 0; i < playersCount; i++)
+    {
+        chipStacks[i] -= entryValue;
+        pot += entryValue;
+    }
+}
+
 
