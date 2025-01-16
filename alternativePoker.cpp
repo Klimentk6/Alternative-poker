@@ -1,89 +1,123 @@
 #include <iostream>
-#include "Constants.hpp"
-#include "InputFunctions.hpp"
-#include "CardsFunctions.hpp"
-#include "PointsFunctions.hpp"
-#include "ChipsFunctions.hpp"
+#include <iostream>
+#include <fstream>
+
+#include "Constants.h"
+#include "InputAndOutputFunctions.h"
+#include "CardFunctions.h"
+#include "ChipFunctions.h"
+#include "BetFunctions.h"
 
 using namespace std;
 
 int main()
 {
-    //Choose number of players
-    unsigned playersCount = choosePlayersCount();
+    unsigned playersCount = 0;
+    int* chipStacks = nullptr;
+    unsigned roundsCount = 0;
 
-    //Initialize deck
-    Card cardsInDeck[CARDS_COUNT];
-    initializeDeck(cardsInDeck);
+    ifstream inputFile;
+    inputFile.open("score.txt");
+    if(inputFile.is_open() && areGoingToContinue())
+    {
+        getInfoFromFile(inputFile, playersCount, chipStacks, roundsCount);
+    }
+    else
+    {
+        playersCount = choosePlayersCount();
+        chipStacks = new int[playersCount];
+        initializeChipStacks(chipStacks, playersCount);
+        roundsCount = 1;
+    }
+    inputFile.close();
+    
+    Card deck[CARDS_COUNT];
+    initializeDeck(deck);
 
-    //Initialize chip stacks
-    int* chipStacks = new int[playersCount];
-    initializeChipStacks(chipStacks, playersCount);
-
-    //Game starts
     printGameStart();
 
-    unsigned roundCount = 1;
-    do
+    while (true)
     {
-        //Round starts
-        printRoundStart(roundCount);
+        printRoundStart(roundsCount);
 
-        //Shuffle deck
-        shuffleDeck(cardsInDeck);
+        shuffleDeck(deck);
 
-        //Calculate points
-        unsigned* playersPoints = new unsigned[playersCount];
-        calculatePlayersPoints(playersPoints, cardsInDeck, playersCount);
-        printPoints(playersPoints, playersCount);
+        unsigned inGamePlayersCount = playersCount;
+        bool* inGamePlayers = new bool[playersCount];
+        intitializeInGamePlayers(inGamePlayers, playersCount);
 
-        //Create pot
+        unsigned* points = new unsigned[playersCount];
+        calculatePoints(points, deck, playersCount);
+
+        unsigned* bets = new unsigned[playersCount];
+        initializeBets(bets, playersCount);
+
         unsigned pot = 0;
 
-        //Pay entry fee
-        payEntryFee(chipStacks, playersCount, pot);
-        printPlayersAndChipStacks(chipStacks, playersCount);
-        printPot(pot);
-        cout << endl;
+        payEntryFee(chipStacks, bets, playersCount, pot);
+        printChipStacks(chipStacks, playersCount);
 
-        printDeck(cardsInDeck);
+        unsigned lastPlayerRaisedIndex = 0;
+        unsigned currentPlayerIndex = 0;
+        unsigned lastRaise = 0;
+        while (true)
+        { 
+            printPot(pot);
+            printPlayerBet(bets, currentPlayerIndex);
+            printLastRaise(lastRaise);
+            printPlayerChipStack(chipStacks, currentPlayerIndex);
+            printPlayersCardsAndPoints(deck, points, currentPlayerIndex);
+            
+            raiseCallOrFold(inGamePlayers,chipStacks,inGamePlayersCount, bets, pot, lastRaise, currentPlayerIndex, lastPlayerRaisedIndex, playersCount);
 
+            if (inGamePlayersCount == 1)
+            {
+                for (int i = 0; i < playersCount; i++)
+                {
+                    if (inGamePlayers[i])
+                    {
+                        cout << "Player" << i + 1 << " wins " << pot << endl;
+                        chipStacks[i] += pot;
+                        pot = 0;
+                        break;
+                    }
+                }
+                break;
+            }
+            else if(hasEveryneCalled(bets, inGamePlayers, playersCount, currentPlayerIndex))
+            {
+                unsigned maxPoints = 0;
+                unsigned winnerIndex = 0;
+                for (int i = 0; i < playersCount; i++)
+                {
+                    if (inGamePlayers[i] && points[i] > maxPoints)
+                    {
+                        maxPoints = points[i];
+                        winnerIndex = i;
+                    }
+                }
+                cout << "Player" << winnerIndex + 1 << " wins " << pot << endl;
+                chipStacks[winnerIndex] += pot;
+                pot = 0;
+                break;
+            }
+            
+            currentPlayerIndex = nextPlayerIndex(currentPlayerIndex, playersCount, inGamePlayers);
+        }
         
-        /*while (true)
-        {
-            unsigned currentPlayer = 1;
-            unsigned currentPlayerIndex = currentPlayer - 1;
-            unsigned lastReise = 0;
-            printPlayersCardsAndPoints(cardsInDeck, playersPoints, currentPlayerIndex);
-            if (lastReise == 0)
-            {
-                cout << "Player" << currentPlayer << " raise or fold? (r/f)";
-                char answer;
-                cin >> answer;
-            }
-            else
-            {
-                cout << "Player" << currentPlayerIndex << " raise, call or fold? (r/c/f)";
-                char answer;
-                cin >> answer;
-            }
-        }*/
+        delete[] points;
+        delete[] inGamePlayers;
+        delete[] bets;
 
+        roundsCount++;
 
-
-
-
-
-        //delete[] playersPoints;
-        //roundCount++;
-
-        if (!areGoingToPlayAgain())
+        if (!areGoingToPlayNewRound())
         {
             break;
         }
-    } while (true);
+    }
 
-    //add chip stacks to a file
+    saveInfoInAFile(chipStacks, playersCount, roundsCount);
 
     delete[] chipStacks;
 
