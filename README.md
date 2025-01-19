@@ -25,9 +25,3 @@ The game can continue for several rounds, and the overall winner is the player w
 
 ## Strategy
 This game combines elements of chance and strategic planning. Players must evaluate both their own cards and the potential hands of their opponents to succeed.
-
-## License
-This project is licensed under the MIT License.
-
-## Contact
-For suggestions or issues, please open an issue on the GitHub repository or contact [your.email@example.com].
