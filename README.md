@@ -1,6 +1,6 @@
 # Alternative-poker
 
-![](images/sevenOfClubs.png)
+<img src="images/sevenOfClubs.png" alt="" width="200"/>
 
 ## Overview
 This is a competitive card game that can be played by 2 to 9 players. The game uses only cards from 7 to Ace. At the beginning of each game, three cards are dealt to each player. The goal is to determine the winner based on the value of their cards. The value is calculated as the sum of the card values, with specific rules for card values that can be predefined (described in the game rules section).
