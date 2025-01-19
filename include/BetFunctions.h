@@ -1,21 +1,26 @@
 #pragma once
 
-void printGameStart()
-{
-    cout << "Game starts" << endl;
-}
-void printRoundStart(unsigned roundCount)
-{
-    cout << endl;
-    cout << "Round " << roundCount << endl;
-    cout << endl;
-}
+using namespace std;
 
-void intitializeInGamePlayers(bool* inGamePlayers, unsigned playersCount)
+void initializeChipStacks(int* chipsArray, unsigned playersCount)
+{
+    for (unsigned player = 0; player < playersCount; player++)
+    {
+        chipsArray[player] = START_CHIPS_COUNT * CHIP_VALUE;
+    }
+}
+void intitializeInGamePlayers(bool* inGamePlayers, unsigned playersCount, const int* chipStacks)
 {
     for (int i = 0; i < playersCount; i++)
     {
-        inGamePlayers[i] = true;
+        if (chipStacks[i] == 0)
+        {
+            inGamePlayers[i] = false;
+        }
+        else
+        {
+            inGamePlayers[i] = true;
+        }
     }
 }
 void initializeBets(unsigned* bets, unsigned playersCount)
@@ -25,33 +30,135 @@ void initializeBets(unsigned* bets, unsigned playersCount)
         bets[i] = 0;
     }
 }
-
-bool isValidRaise(unsigned raiseValue, unsigned lastRaise, unsigned currentPlayerIndex, const int* chipStacks)
+void initializePlayersCalled(bool* playersCalled, unsigned playersCount)
 {
-    if (raiseValue < lastRaise * 2)
+    for (int i = 0; i < playersCount; i++)
     {
-        return false;
-    }
-    else if (raiseValue % CHIP_VALUE != 0)
-    {
-        return false;
-    }
-    else if (raiseValue > chipStacks[currentPlayerIndex])
-    {
-        return false;
+        playersCalled[i] = false;
     }
 }
-void playerRaises(unsigned currentPlayerIndex, int* chipStacks, unsigned* bets, unsigned& pot, unsigned& lastRaise, unsigned& lastPlayerRaisedIndex, unsigned playersCount)
+
+void printRoundStart(unsigned roundCount)
+{
+    cout << "Round " << roundCount << endl;
+}
+void printChipStacks(const int* chipStacks, unsigned playersCount)
+{
+    for (unsigned i = 0; i < playersCount; i++)
+    {
+        if (i % 3 == 0 && i != 0)
+        {
+            cout << endl;
+        }
+        cout << "Player" << i + 1 << ": " << chipStacks[i] << ' ';
+    }
+    cout << endl;
+}
+void printPot(unsigned pot)
+{
+    cout << "Pot: " << pot << endl;
+}
+void printPlayerBets(const unsigned* bets, unsigned playerIndex)
+{
+    cout << "You have given: " << bets[playerIndex] << endl;
+}
+void printLastRaise(unsigned lastRaise)
+{
+    cout << "Last raise: " << lastRaise << endl;
+}
+void printPlayerChipStack(const int* chipStacks, unsigned playerIndex)
+{
+    cout << "Player" << playerIndex + 1 << " - " << chipStacks[playerIndex] << endl;
+}
+void printCard(Card card)
+{
+    cout << RANK_SYMBOLS[card.rank] << SUIT_SYMBOLS[card.suit] << ' ';
+}
+void printPlayersCardsAndPoints(const Card* deck, const unsigned* points, unsigned playerIndex)
+{
+    for (int i = playerIndex * CARDS_PER_PLAYER; i < playerIndex * CARDS_PER_PLAYER + CARDS_PER_PLAYER; i++)
+    {
+        printCard(deck[i]);
+    }
+    cout << "- " << points[playerIndex] << " points" << endl;
+}
+void printPlayerInfo(unsigned roundsCount, const int* chipStacks, unsigned playersCount, unsigned pot, const unsigned* bets, unsigned playerIndex, unsigned lastRaise, const Card* deck, const unsigned* points)
+{
+    printRoundStart(roundsCount);
+    cout << endl;
+    printChipStacks(chipStacks, playersCount);
+    cout << endl;
+    printPot(pot);
+    cout << endl;
+    printPlayerBets(bets, playerIndex);
+    printLastRaise(lastRaise);
+    cout << endl;
+    printPlayerChipStack(chipStacks, playerIndex);
+    printPlayersCardsAndPoints(deck, points, playerIndex);
+}
+
+void payEntryFee(int* chipStacks, unsigned playersCount, unsigned& pot, bool* inGamePlayers)
+{
+    unsigned entryFee = ENTRY_CHIPS_COUNT * CHIP_VALUE;
+    for (unsigned i = 0; i < playersCount; i++)
+    {
+        if (chipStacks[i] >= entryFee)
+        {
+            chipStacks[i] -= entryFee;
+            pot += entryFee;
+        }
+        else
+        {
+            inGamePlayers[i] = false;
+        }
+    }
+}
+
+
+
+unsigned heighestPosibleRaise(const int* chipStacks, unsigned playersCount, unsigned playerIndex, const bool* inGamePlayers)
+{
+    unsigned result = START_CHIPS_COUNT * CHIP_VALUE * playersCount;
+    for (int i = 0; i < playersCount; i++)
+    {
+        if (result > chipStacks[i] && inGamePlayers[i])
+        {
+            result = chipStacks[i];
+        }
+    }
+    return result;
+}
+bool isRaiseAllowed(unsigned lastRaise, unsigned playerIndex, int* chipStacks, unsigned playersCount, const bool* inGamePlayers)
+{
+    if (heighestPosibleRaise(chipStacks, playersCount, playerIndex, inGamePlayers) < lastRaise + CHIP_VALUE)
+    {
+        return false;
+    }
+    return true;
+}
+bool isValidRaise(unsigned raiseValue, unsigned lastRaise, unsigned playerIndex, const int* chipStacks, unsigned playersCount, const bool* inGamePlayers)
+{
+    if (raiseValue < lastRaise + CHIP_VALUE)
+    {
+        return false;
+    }
+    else if (raiseValue > heighestPosibleRaise(chipStacks, playersCount, playerIndex, inGamePlayers))
+    {
+        return false;
+    }
+    return true;
+}
+void playerRaises(unsigned playerIndex, int* chipStacks, unsigned* bets, unsigned& pot, unsigned& lastRaise, unsigned& lastPlayerRaisedIndex, unsigned playersCount, const bool* inGamePlayers, bool* playersCalled)
 {
     unsigned raiseValue;
     while (true)
     {
         cout << "Raise: ";
         cin >> raiseValue;
-        if (!isValidRaise(raiseValue, lastRaise, currentPlayerIndex, chipStacks))
+        if (!isValidRaise(raiseValue, lastRaise, playerIndex, chipStacks, playersCount, inGamePlayers))
         {
             cout << "Invalid input!" << endl;
-            cout << "Enter a value beatween " << lastRaise * 2 << " and " << chipStacks[currentPlayerIndex] << " and divisible by " << CHIP_VALUE << "." << endl;
+            cout << "Please enter a number between " << lastRaise + CHIP_VALUE << " and " << heighestPosibleRaise(chipStacks, playersCount, playerIndex, inGamePlayers) << "." << endl;
         }
         else
         {
@@ -59,107 +166,102 @@ void playerRaises(unsigned currentPlayerIndex, int* chipStacks, unsigned* bets, 
         }
     }
 
-    lastPlayerRaisedIndex = currentPlayerIndex;
-    chipStacks[currentPlayerIndex] -= raiseValue;
-    bets[currentPlayerIndex] += raiseValue;
+    lastPlayerRaisedIndex = playerIndex;
+    chipStacks[playerIndex] -= raiseValue;
+    bets[playerIndex] += raiseValue;
     pot += raiseValue;
     lastRaise = raiseValue;
 
-    cout << "Player" << currentPlayerIndex + 1 << " raises " << raiseValue << endl;
+    initializePlayersCalled(playersCalled, playersCount);
+    playersCalled[playerIndex] = true;
+
+    cout << "Player" << playerIndex + 1 << " raises " << raiseValue << endl;
     cout << endl;
 }
-void playerCalls(unsigned currentPlayerIndex, unsigned lastPlayerRaisedIndex, int* chipStacks, unsigned* bets, unsigned& pot, unsigned lastRaise)
+
+bool isCallAllowed(unsigned lastRaise, const unsigned* bets, unsigned playerIndex)
 {
-    unsigned callValue = bets[lastPlayerRaisedIndex] - bets[currentPlayerIndex];
-    if (callValue > chipStacks[currentPlayerIndex])
+    if (lastRaise > bets[playerIndex])
     {
-        bets[currentPlayerIndex] += chipStacks[currentPlayerIndex];
-        
+        return true;
     }
-    else
-    {
-        chipStacks[currentPlayerIndex] -= callValue;
-        bets[currentPlayerIndex] += callValue;
-        pot += callValue;
-        cout << "Player" << currentPlayerIndex + 1 << " calls " << callValue << endl;
-    }
+    return false;
+}
+void playerCalls(unsigned playerIndex, unsigned lastPlayerRaisedIndex, int* chipStacks, unsigned* bets, unsigned& pot, unsigned lastRaise, bool* playersCalled)
+{
+    unsigned callValue = bets[lastPlayerRaisedIndex] - bets[playerIndex];
+    bets[playerIndex] += callValue;
+    pot += callValue;
+    chipStacks[playerIndex] -= callValue;
+    playersCalled[playerIndex] = true;
     cout << endl;
 }
-void playerFolds(unsigned currentPlayerIndex, bool* inGamePlayers, unsigned& inGamePlayersCount)
+
+void playerFolds(unsigned playerIndex, bool* inGamePlayers)
 {
-    inGamePlayers[currentPlayerIndex] = false;
-    inGamePlayersCount--;
-    cout << "Player" << currentPlayerIndex + 1 << " folds" << endl;
-    cout << endl;
+    inGamePlayers[playerIndex] = false;
 }
-void raiseCallOrFold(bool* inGamePlayers, int* chipStacks, unsigned& inGamePlayersCount, unsigned* bets, unsigned& pot, unsigned& lastRaise, unsigned currentPlayerIndex, unsigned& lastPlayerRaisedIndex, unsigned playersCount)
+
+void raiseCallOrFold(bool* inGamePlayers, int* chipStacks, unsigned* bets, unsigned& pot, unsigned& lastRaise, unsigned playerIndex, unsigned& lastPlayerRaisedIndex, unsigned playersCount, bool* playersCalled)
 {
-    char action;
-    if (lastRaise == 0)
+    bool raiseAllowed = isRaiseAllowed(lastRaise, playerIndex, chipStacks, playersCount, inGamePlayers);
+    bool callAllowed = isCallAllowed(lastRaise, bets, playerIndex);
+    if (raiseAllowed && !callAllowed)
     {
         cout << "Raise or fold? (r/f)" << endl;
     }
-    else
+    else if (!raiseAllowed && callAllowed)
+    {
+        cout << "Call or fold? (c/f)" << endl;
+    }
+    else if(raiseAllowed && callAllowed)
     {
         cout << "Raise, call or fold? (r/c/f)" << endl;
     }
+    else
+    {
+        cout << "Fold? (f)" << endl;
+    }
+
+    char action;
     while (true)
     {
         cin >> action;
         if (action == 'f')
         {
-            playerFolds(currentPlayerIndex, inGamePlayers, inGamePlayersCount);
+            playerFolds(playerIndex, inGamePlayers);
             break;
         }
-        else if (action == 'r')
+        else if ((action == 'r') && raiseAllowed)
         {
-            playerRaises(currentPlayerIndex, chipStacks, bets, pot, lastRaise, lastPlayerRaisedIndex,playersCount);
+            playerRaises(playerIndex, chipStacks, bets, pot, lastRaise, lastPlayerRaisedIndex,playersCount, inGamePlayers, playersCalled);
             break;
         }
-        else if ((action == 'c') && (lastRaise != 0))
+        else if ((action == 'c') && callAllowed)
         {
-            playerCalls(currentPlayerIndex, lastPlayerRaisedIndex, chipStacks, bets, pot, lastRaise);
+            playerCalls(playerIndex, lastPlayerRaisedIndex, chipStacks, bets, pot, lastRaise, playersCalled);
             break;
         }
-        else if(lastRaise == 0)
+        else if(!callAllowed && raiseAllowed)
         {
             cout << "Invalid input!" << endl;
             cout << "Please enter 'r' for raise or 'f' for fold." << endl;
         }
-        else
+        else if(callAllowed && raiseAllowed)
         {
             cout << "Invalid input!" << endl;
             cout << "Please enter 'r' for raise, 'f' for fold or 'c' for call." << endl;
         }
+        else if (callAllowed && !raiseAllowed)
+        {
+            cout << "Invalid input!" << endl;
+            cout << "Please enter 'c' for call or 'f' for fold." << endl;
+        }
+        else
+        {
+            cout << "Invalid input!" << endl;
+            cout << "Please enter 'f' for fold." << endl;
+        }
     }
 }
 
-unsigned nextPlayerIndex(unsigned currentPlayerIndex, unsigned playersCount, const bool* inGamePlayers)
-{
-    do
-    {
-        currentPlayerIndex++;
-        if (currentPlayerIndex == playersCount)
-        {
-            currentPlayerIndex = 0;
-        }
-    } while (inGamePlayers[currentPlayerIndex] == false);
-
-    return currentPlayerIndex;
-}
-bool hasEveryneCalled(const unsigned* bets, const bool* inGamePlayers, unsigned playersCount, unsigned currentPlayerIndex)
-{
-    unsigned everyBet = bets[nextPlayerIndex(currentPlayerIndex, playersCount, inGamePlayers)];
-    if (everyBet == ENTRY_CHIPS_COUNT * CHIP_VALUE)
-    {
-        return false;
-    }
-    for (unsigned i = 0; i < playersCount; i++)
-    {
-        if (bets[i] != everyBet && inGamePlayers[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
