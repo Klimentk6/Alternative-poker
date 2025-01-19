@@ -206,3 +206,4 @@ void calculatePoints(unsigned* points, const Card* deck, unsigned playersCount)
         points[playerIndex] = playersPoints;
     }
 }
+
