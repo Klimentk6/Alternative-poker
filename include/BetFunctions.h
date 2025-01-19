@@ -2,11 +2,11 @@
 
 using namespace std;
 
-void initializeChipStacks(int* chipsArray, unsigned playersCount)
+void initializeChipStacks(int* chipStacks, unsigned playersCount)
 {
-    for (unsigned player = 0; player < playersCount; player++)
+    for (unsigned i = 0; i < playersCount; i++)
     {
-        chipsArray[player] = START_CHIPS_COUNT * CHIP_VALUE;
+        chipStacks[i] = START_CHIPS_COUNT * CHIP_VALUE;
     }
 }
 void intitializeInGamePlayers(bool* inGamePlayers, unsigned playersCount, const int* chipStacks)
@@ -214,7 +214,7 @@ void raiseCallOrFold(bool* inGamePlayers, int* chipStacks, unsigned* bets, unsig
     {
         cout << "Call or fold? (c/f)" << endl;
     }
-    else if(raiseAllowed && callAllowed)
+    else if (raiseAllowed && callAllowed)
     {
         cout << "Raise, call or fold? (r/c/f)" << endl;
     }
@@ -234,7 +234,7 @@ void raiseCallOrFold(bool* inGamePlayers, int* chipStacks, unsigned* bets, unsig
         }
         else if ((action == 'r') && raiseAllowed)
         {
-            playerRaises(playerIndex, chipStacks, bets, pot, lastRaise, lastPlayerRaisedIndex,playersCount, inGamePlayers, playersCalled);
+            playerRaises(playerIndex, chipStacks, bets, pot, lastRaise, lastPlayerRaisedIndex, playersCount, inGamePlayers, playersCalled);
             break;
         }
         else if ((action == 'c') && callAllowed)
@@ -242,12 +242,12 @@ void raiseCallOrFold(bool* inGamePlayers, int* chipStacks, unsigned* bets, unsig
             playerCalls(playerIndex, lastPlayerRaisedIndex, chipStacks, bets, pot, lastRaise, playersCalled);
             break;
         }
-        else if(!callAllowed && raiseAllowed)
+        else if (!callAllowed && raiseAllowed)
         {
             cout << "Invalid input!" << endl;
             cout << "Please enter 'r' for raise or 'f' for fold." << endl;
         }
-        else if(callAllowed && raiseAllowed)
+        else if (callAllowed && raiseAllowed)
         {
             cout << "Invalid input!" << endl;
             cout << "Please enter 'r' for raise, 'f' for fold or 'c' for call." << endl;
@@ -263,5 +263,6 @@ void raiseCallOrFold(bool* inGamePlayers, int* chipStacks, unsigned* bets, unsig
             cout << "Please enter 'f' for fold." << endl;
         }
     }
+    system("cls");
 }
 
