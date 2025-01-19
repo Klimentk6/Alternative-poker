@@ -60,6 +60,7 @@ int main()
         {
             playerIndex = getNextPlayerIndex(playerIndex, playersCount, inGamePlayers, chipStacks);
         }
+
         unsigned lastPlayerRaisedIndex = playersCount;
         unsigned lastRaise = 0;
         while (true)
@@ -67,7 +68,6 @@ int main()
             printPlayerInfo(roundsCount, chipStacks, playersCount, pot, bets, playerIndex, lastRaise, deck, points);
             
             raiseCallOrFold(inGamePlayers,chipStacks, bets, pot, lastRaise, playerIndex, lastPlayerRaisedIndex, playersCount, playersCalled);
-            system("cls");
 
             if (onePlayerLeft(inGamePlayers, playersCount))
             {
