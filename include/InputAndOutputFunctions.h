@@ -39,10 +39,12 @@ bool areGoingToContinue()
         cin >> answer;
         if (answer == 'y')
         {
+            cout << endl;
             return true;
         }
         else if (answer == 'n')
         {
+            cout << endl;
             return false;
         }
         else
@@ -86,43 +88,16 @@ void saveInfoInAFile(int* chipStacks, unsigned playersCount, unsigned roundCount
     }
     else
     {
-        outputFile << "Alternative poker" << endl;
-        outputFile << endl;
-        outputFile << "Number of players: " << playersCount << endl;
-        outputFile << "Rounds played: " << roundCount - 1<< endl;
-        outputFile << endl;
-        outputFile << "Chip stacks" << endl;
+        outputFile << playersCount << endl;
+        outputFile << roundCount - 1 << endl;
         for (int i = 0; i < playersCount; i++)
         {
-            outputFile << "Player" << i + 1 << ": " << chipStacks[i] << std::endl;
+            outputFile << chipStacks[i] << endl;
         }
         outputFile.close();
     }
 }
 
-bool isStringPrefix(const char* text1, const char* text2)
-{
-    while (*text2)
-    {
-        if (*text1 != *text2)
-        {
-            return false;
-        }
-        text1++;
-        text2++;
-    }
-    return true;
-}
-unsigned stringLength(const char* text)
-{
-    unsigned result = 0;
-    while (*text)
-    {
-        result++;
-        text++;
-    }
-    return result;
-}
 unsigned myAtoiUnsigned(const char* text) {
     if (text == nullptr) 
     {
@@ -142,27 +117,37 @@ unsigned myAtoiUnsigned(const char* text) {
 void getInfoFromFile(ifstream &inputFile, unsigned &playersCount, int* &chipStacks, unsigned &roundsCount)
 {
     char line[FILE_LINE_LENGTH];
+    int i = 0;
     while (inputFile.getline(line, FILE_LINE_LENGTH))
     {
-        if (isStringPrefix(line, FILE_PLAYERS_COUNT_TEXT))
+        if (i == 0)
         {
-            char* lineStart = line + stringLength(FILE_PLAYERS_COUNT_TEXT);
-            playersCount = myAtoiUnsigned(lineStart);
+            playersCount = myAtoiUnsigned(line);
             chipStacks = new int[playersCount];
         }
-        else if (isStringPrefix(line, FILE_ROUNDS_TEXT))
+        else if (i == 1)
         {
-            char* lineStart = line + stringLength(FILE_ROUNDS_TEXT);
-            roundsCount = myAtoiUnsigned(lineStart) + 1;
+            roundsCount = myAtoiUnsigned(line);
         }
-        else if (isStringPrefix(line, FILE_PLAYER_TEXT))
+        else
         {
-            char* ptrIndexStart = line + stringLength(FILE_PLAYER_TEXT);
-            unsigned index = myAtoiUnsigned(ptrIndexStart) - 1;
-            char* ptrChipsStart = line + stringLength(FILE_PLAYER_AND_NUMBER_TEXT);
-            unsigned chips = myAtoiUnsigned(ptrChipsStart);
-            chipStacks[index] = chips;
+            chipStacks[i - 2] = myAtoiUnsigned(line);
         }
+        i++;
     }
 }
 
+void deleteFile()
+{
+    ifstream file("score.txt");
+
+    if (!file) 
+    {
+        std::cout << "File does not exist" << std::endl;
+    }
+    else 
+    {
+        file.close(); 
+        remove("score.txt");
+    }
+}
