@@ -43,7 +43,3 @@ const unsigned ENTRY_CHIPS_COUNT = 1;
 const unsigned CARDS_PER_PLAYER = 3;
 
 const unsigned FILE_LINE_LENGTH = 100;
-const char FILE_PLAYERS_COUNT_TEXT[] = "Number of players: ";
-const char FILE_ROUNDS_TEXT[] = "Rounds played: ";
-const char FILE_PLAYER_TEXT[] = "Player";
-const char FILE_PLAYER_AND_NUMBER_TEXT[] = "PlayerN: ";
