@@ -86,6 +86,8 @@ int main()
                 if (winnersCount == 1)
                 {
                     oneWinner(playersCount, winners, pot, chipStacks);
+                    printChipStacks(chipStacks, playersCount);
+                    cout << endl;
                 }
                 else
                 {
