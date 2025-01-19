@@ -39,7 +39,7 @@ void calculatePoints(unsigned* points, const Card* deck, unsigned playersCount)
 {
     for (unsigned i = 0; i < playersCount * CARDS_PER_PLAYER; i += CARDS_PER_PLAYER)
     {
-        unsigned player = i / CARDS_PER_PLAYER;
+        unsigned playerIndex = i / CARDS_PER_PLAYER;
         unsigned playersPoints = 0;
 
         Card first = deck[i];
@@ -68,17 +68,41 @@ void calculatePoints(unsigned* points, const Card* deck, unsigned playersCount)
                 playersPoints = RANK_POINTS[first.rank] + RANK_POINTS[second.rank] + RANK_POINTS[third.rank];
             }
         }
+        else if (first.rank == SEVEN && second.rank == SEVEN)
+        {
+            playersPoints = 23;
+        }
+        else if (first.rank == SEVEN && third.rank == SEVEN)
+        {
+            playersPoints = 23;
+        }
+        else if (second.rank == SEVEN && third.rank == SEVEN)
+        {
+            playersPoints = 23;
+        }
+        else if (first.rank == ACE && second.rank == ACE)
+        {
+            playersPoints = RANK_POINTS[ACE] * 2;
+        }
+        else if (first.rank == ACE && third.rank == ACE)
+        {
+            playersPoints = RANK_POINTS[ACE] * 2;
+        }
+        else if (second.rank == ACE && third.rank == ACE)
+        {
+            playersPoints = RANK_POINTS[ACE] * 2;
+        }
         else if (first.rank == second.rank && isSevenOfClubs(third))
         {
-            playersPoints = RANK_POINTS[first.rank] * CARDS_PER_PLAYER;
+            playersPoints = RANK_POINTS[first.rank] * 2 + RANK_POINTS[ACE];
         }
         else if (first.rank == third.rank && isSevenOfClubs(second))
         {
-            playersPoints = RANK_POINTS[first.rank] * CARDS_PER_PLAYER;
+            playersPoints = RANK_POINTS[first.rank] * 2 + RANK_POINTS[ACE];
         }
         else if (second.rank == third.rank && isSevenOfClubs(first))
         {
-            playersPoints = RANK_POINTS[second.rank] * CARDS_PER_PLAYER;
+            playersPoints = RANK_POINTS[second.rank] * 2 + RANK_POINTS[ACE];
         }
         else if (first.suit == second.suit)
         {
@@ -149,7 +173,7 @@ void calculatePoints(unsigned* points, const Card* deck, unsigned playersCount)
                     playersPoints = RANK_POINTS[second.rank];
                 }
             }
-            else
+            else if (third.rank > second.rank && third.rank > first.rank)
             {
                 if (isSevenOfClubs(first) || isSevenOfClubs(second))
                 {
@@ -160,21 +184,25 @@ void calculatePoints(unsigned* points, const Card* deck, unsigned playersCount)
                     playersPoints = RANK_POINTS[third.rank];
                 }
             }
+            else
+            {
+                int maxRank = 0;
+                if (first.rank >= maxRank)
+                {
+                    maxRank = first.rank;
+                }
+                if (second.rank >= maxRank)
+                {
+                    maxRank = second.rank;
+                }
+                if (third.rank >= maxRank)
+                {
+                    maxRank = third.rank;
+                }
+                playersPoints = RANK_POINTS[maxRank];
+            }
         }
 
-        points[player] = playersPoints;
+        points[playerIndex] = playersPoints;
     }
-}
-
-void printCard(Card card)
-{
-    cout << RANK_SYMBOLS[card.rank] << SUIT_SYMBOLS[card.suit] << ' ';
-}
-void printPlayersCardsAndPoints(const Card* cardsInDeck, const unsigned* playersPoints, unsigned player)
-{
-    for (int i = player * CARDS_PER_PLAYER; i < player * CARDS_PER_PLAYER + CARDS_PER_PLAYER; i++)
-    {
-        printCard(cardsInDeck[i]);
-    }
-    cout << "- " << playersPoints[player] << " points" << endl;
 }
