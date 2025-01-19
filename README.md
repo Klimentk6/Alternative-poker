@@ -19,11 +19,3 @@ The game progresses in rounds. In each round:
 4. If there are multiple players with the same highest total, the game enters a \"tie\" mode where players compete for the already placed points.
 
 The game can continue for several rounds, and the overall winner is the player with the highest total score after a predetermined number of rounds.
-
-## How to Play
-1. Compile and run the C++ console application.
-2. Follow the on-screen instructions to start the game.
-3. Review your cards, place your bets, and reveal the cards as prompted by the game.
-
-## Strategy
-This game combines elements of chance and strategic planning. Players must evaluate both their own cards and the potential hands of their opponents to succeed.
