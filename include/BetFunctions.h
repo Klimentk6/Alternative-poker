@@ -114,8 +114,6 @@ void payEntryFee(int* chipStacks, unsigned playersCount, unsigned& pot, bool* in
     }
 }
 
-
-
 unsigned heighestPosibleRaise(const int* chipStacks, unsigned playersCount, unsigned playerIndex, const bool* inGamePlayers)
 {
     unsigned result = START_CHIPS_COUNT * CHIP_VALUE * playersCount;
