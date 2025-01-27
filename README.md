@@ -19,3 +19,7 @@ The game progresses in rounds. In each round:
 4. If there are multiple players with the same highest total, the game enters a \"tie\" mode where players compete for the already placed points.
 
 The game can continue for several rounds, and the overall winner is the player with the highest total score after a predetermined number of rounds.
+
+## Codebase Details
+- Language: C++ (console-based application).
+- Dependencies: None required; the game runs with standard C++ libraries.
