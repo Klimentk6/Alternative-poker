@@ -113,7 +113,6 @@ unsigned myAtoiUnsigned(const char* text) {
     }
     return result;
 }
-
 void getInfoFromFile(ifstream &inputFile, unsigned &playersCount, int* &chipStacks, unsigned &roundsCount)
 {
     char line[FILE_LINE_LENGTH];
@@ -127,7 +126,7 @@ void getInfoFromFile(ifstream &inputFile, unsigned &playersCount, int* &chipStac
         }
         else if (i == 1)
         {
-            roundsCount = myAtoiUnsigned(line);
+            roundsCount = myAtoiUnsigned(line) + 1;
         }
         else
         {
