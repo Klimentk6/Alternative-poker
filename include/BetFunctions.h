@@ -263,4 +263,3 @@ void raiseCallOrFold(bool* inGamePlayers, int* chipStacks, unsigned* bets, unsig
     }
     system("cls");
 }
-
