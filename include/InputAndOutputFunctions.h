@@ -138,15 +138,11 @@ void getInfoFromFile(ifstream &inputFile, unsigned &playersCount, int* &chipStac
 
 void deleteFile()
 {
-    ifstream file("score.txt");
+    ifstream scoreFile("score.txt");
 
-    if (!file) 
+    if (scoreFile)
     {
-        std::cout << "File does not exist" << std::endl;
-    }
-    else 
-    {
-        file.close(); 
+        scoreFile.close();
         remove("score.txt");
     }
 }
